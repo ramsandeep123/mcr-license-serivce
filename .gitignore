@@ -1,0 +1,26 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Optional: Ignore runtime files
+*.pid
+*.seed
+*.pid.lock
+
+# Optional: VSCode settings
+.vscode/
+
+# Optional: Ignore local builds or dist folders
+dist/
+build/
