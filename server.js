@@ -62,12 +62,10 @@ app.post("/singed-the-payload",(req,res)=>{
   const email = req.body.email;
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
-  const password = req.body.password
-  const confirmPassword = req.body.confirmPassword
   const telephone = req.body.telephone;
   const secret = "hKguq8pikkXGHt+Mve5uoMX5Y5siOB6sgaBlzfjVf3ErSFU0p1NX/q3qYtU+lWu+Pf61sotsCr5wL7vkstKgKA==";
 
-  if(!email || !firstName || !lastName || !password || !confirmPassword || !telephone){
+  if(!email || !firstName || !lastName || !telephone){
     return res.status(400).json({error:"All fields are required for signing the payload"})
   }
 
@@ -75,8 +73,6 @@ const payload = {
    email: email,
    firstName: firstName,
    lastName: lastName,
-   password: password,
-   confirmPassword : confirmPassword,
    telephone:telephone
   }
 
