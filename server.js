@@ -217,6 +217,41 @@ app.post('/check-tx-license', async (req, res) => {
   }
 });
 
+app.post("/forward-sso", async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ error: "Token is required" });
+    }
+
+    // Build form-data manually (since external API expects form-data)
+    const formData = new URLSearchParams();
+    formData.append("token", token);
+    formData.append("source", "aj_marketing_tool");
+
+    // Forward request
+    const response = await axios.post(
+      "https://prod.breakthroughbroker.com/auth/api/v1/public/sso/jwtauth",
+      formData,
+      {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      }
+    );
+
+    res.status(200).json({
+      message: "Token forwarded successfully",
+      data: response.data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Failed to forward token",
+      details: error.response?.data || error.message,
+    });
+  }
+});
+
+
 // app.post("/create-skyslope-agent", async (req, res) => {
 //   const { firstName,lastName,email,streetNo,streetName,zip,phone,stateCode } = req.body;
 
