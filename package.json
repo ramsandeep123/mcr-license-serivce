@@ -4,8 +4,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js",
-    "postinstall": "npx puppeteer browsers install chrome && ls -la /opt/render/.cache/puppeteer"
+    "build": "./render-build.sh",
+    "start": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
