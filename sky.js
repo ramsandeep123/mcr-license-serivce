@@ -12,7 +12,7 @@ async function createSkySlopeAgent(firstName,lastName,email,streetNo,streetName,
    const browser = await puppeteer.launch({ 
     headless: "new", // Use the new headless mode
     defaultViewport: null,
-    // executablePath: executablePath(), // Specify executable path for Render
+    executablePath: executablePath(), // Specify executable path for Render
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
