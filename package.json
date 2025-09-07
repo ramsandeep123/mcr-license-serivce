@@ -4,8 +4,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "./render-build.sh",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "build": "bash render-build.sh"
   },
   "keywords": [],
   "author": "",
