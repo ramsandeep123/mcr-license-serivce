@@ -9,8 +9,6 @@ async function createSkySlopeAgent(firstName,lastName,email,streetNo,streetName,
   const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms + Math.random() * 50));
   const USERNAME = process.env.SKY_USERNAME || "";
   const PASSWORD = process.env.SKY_PASSWORD || "";
-  console.log("USERNAME", USERNAME);
-  console.log("PASSWORD", PASSWORD );
    const browser = await puppeteer.launch({ 
     headless: "new", // Use the new headless mode
     defaultViewport: null,
