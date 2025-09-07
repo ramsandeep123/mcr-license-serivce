@@ -1,14 +1,14 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const qs = require('qs');
 const cors = require('cors');
-// const { createSkySlopeAgent } = require('./sky');
+const { createSkySlopeAgent } = require('./sky');
 const app = express();
 const jwt = require('jsonwebtoken');
 const port = 3000;
-
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -63,8 +63,7 @@ app.post("/singed-the-payload",(req,res)=>{
   const firstName = req.body.firstName;
   const lastName = req.body.lastName;
   const telephone = req.body.telephone;
-  const secret = "hKguq8pikkXGHt+Mve5uoMX5Y5siOB6sgaBlzfjVf3ErSFU0p1NX/q3qYtU+lWu+Pf61sotsCr5wL7vkstKgKA==";
-
+  const secret = process.env.MC_SECRET_KEY;
   if(!email || !firstName || !lastName || !telephone){
     return res.status(400).json({error:"All fields are required for signing the payload"})
   }
@@ -251,21 +250,20 @@ app.post("/forward-sso", async (req, res) => {
   }
 });
 
+app.post("/create-skyslope-agent", async (req, res) => {
+  const { firstName,lastName,email,streetNo,streetName,zip,phone,stateCode } = req.body;
 
-// app.post("/create-skyslope-agent", async (req, res) => {
-//   const { firstName,lastName,email,streetNo,streetName,zip,phone,stateCode } = req.body;
+  if (!firstName || !lastName || !email || !stateCode) {
+    return res.status(400).json({ error: "firstName, lastName, email and stateCode are required" });
+  }
 
-//   if (!firstName || !lastName || !email || !stateCode) {
-//     return res.status(400).json({ error: "firstName, lastName, email and stateCode are required" });
-//   }
-
-//   try {
-//     const result = await createSkySlopeAgent(firstName,lastName,email,streetNo,streetName,zip,phone,stateCode);
-//     res.status(result.success ? 200 : 500).json({message: result.success ? "Agent created successfully" : "Failed to create agent" });
-//   } catch (err) {
-//     res.status(500).json({ error: "Failed to create agent", details: err.message });
-//   }
-// });
+  try {
+    const result = await createSkySlopeAgent(firstName,lastName,email,streetNo,streetName,zip,phone,stateCode);
+    res.status(result.success ? 200 : 500).json({message: result.success ? "Agent created successfully" : "Failed to create agent" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to create agent", details: err.message });
+  }
+});
 
 app.listen(port, () => {
   console.log(`License Checker API running at http://localhost:${port}`);

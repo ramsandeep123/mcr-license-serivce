@@ -1,22 +1,3 @@
-// const jwt = require('jsonwebtoken');
-
-// const payload = {
-//   email: "sandiptesting@gmail.com",
-//   firstName: "sandiptest",
-//   lastName: "newramtest",
-//   city: "mycity",
-//   state: "CA",
-//   zip: "90001",
-//   address1: "myaddress"
-// };
-
-
-// const secret = "hKguq8pikkXGHt+Mve5uoMX5Y5siOB6sgaBlzfjVf3ErSFU0p1NX/q3qYtU+lWu+Pf61sotsCr5wL7vkstKgKA==";
-
-// const token = jwt.sign(payload, secret, { algorithm: "HS256", expiresIn: "5m" });
-
-// console.log("Generated JWT:", token);
-
 const cheerio = require("cheerio");
 
 function parseTrecLicense(html) {
