@@ -20,7 +20,7 @@ echo "🌐 Installing Chrome for Puppeteer..."
 npx puppeteer browsers install chrome
 
 echo "💾 Syncing Puppeteer cache..."
-if [[ ! -d $PUPPETEER_CACHE_DIR/chrome ]]; then
+if [[ ! -d $PUPPETEER_CACHE_DIR ]]; then
   echo "➡️ Copying Chrome from build cache to runtime cache..."
   cp -R /opt/render/project/src/.cache/puppeteer/chrome/ $PUPPETEER_CACHE_DIR
 else
