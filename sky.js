@@ -82,9 +82,13 @@ async function createSkySlopeAgent(firstName,lastName,email,streetNo,streetName,
     await page.type("#input61", PASSWORD, { delay: 100 });
     await delay(1000);
 
-    await page.click(".o-form-button-bar");
+    // await page.click(".o-form-button-bar");
 
-    await page.waitForNavigation({ waitUntil: "networkidle2" });
+    // await page.waitForNavigation({ waitUntil: "networkidle2" });
+    await Promise.all([
+    page.waitForNavigation({ waitUntil: "networkidle2", timeout: 60000 }), // Increased timeout and added Promise.all
+    page.click(".o-form-button-bar"),
+  ]);
     console.log("✅ Logged into SkySlope!");
     await delay(2000);
 
