@@ -93,8 +93,16 @@ async function createSkySlopeAgent(firstName,lastName,email,streetNo,streetName,
     await delay(2000);
 
     // Navigate to Add Agent page
-    await page.goto("https://app.skyslope.com/ManageBrokerAgents.aspx", { waitUntil: "networkidle2",timeout: 60000 });
-    await delay(2000);
+    // await page.goto("https://app.skyslope.com/ManageBrokerAgents.aspx", { waitUntil: "networkidle2",timeout: 60000 });
+    // await delay(2000);
+    await page.goto("https://app.skyslope.com/ManageBrokerAgents.aspx", { 
+  waitUntil: "domcontentloaded",
+  timeout: 60000
+});
+
+// Wait for the Add Agent button to exist instead of waiting for network idle
+await page.waitForSelector("#ContentPlaceHolder1_ibtnAddAgents", { visible: true, timeout: 30000 });
+console.log("✅ Manage Broker Agents page loaded");
 
     await page.click("#ContentPlaceHolder1_ibtnAddAgents");
    await delay(2000);
