@@ -20,4 +20,4 @@ echo "✅ Chrome installed at: $CHROME_PATH"
 # Save it into .env so your Node app can use it
 echo "PUPPETEER_EXECUTABLE_PATH=$CHROME_PATH" > .env
 
-echo "🎉 Render build script completed!"
+echo "🎉 Render build script completed" 
