@@ -1,23 +1,31 @@
 #!/usr/bin/env bash
-set -e
+# Exit on error
+set -o errexit
 
 echo "🚀 Starting Render build..."
 
 echo "📦 Installing npm packages..."
+
 npm install
 
-echo "📂 Creating Puppeteer cache directory..."
-mkdir -p /opt/render/.cache/puppeteer
+# Uncomment if your project needs a build step
+# echo "🏗️ Running project build..."
+# npm run build
+
+echo "📂 Ensuring Puppeteer cache directory exists..."
+PUPPETEER_CACHE_DIR=/opt/render/.cache/puppeteer
+mkdir -p $PUPPETEER_CACHE_DIR
 
 echo "🌐 Installing Chrome for Puppeteer..."
-npx puppeteer browsers install chrome --cache-dir=/opt/render/.cache/puppeteer
+npx puppeteer browsers install chrome
 
-# Dynamically fetch executable path
-CHROME_PATH=$(npx puppeteer browsers executable-path chrome --cache-dir=/opt/render/.cache/puppeteer)
+echo "💾 Syncing Puppeteer cache..."
+if [[ ! -d $PUPPETEER_CACHE_DIR/chrome ]]; then
+  echo "➡️ Copying Chrome from build cache to runtime cache..."
+  cp -R /opt/render/project/src/.cache/puppeteer/chrome/ $PUPPETEER_CACHE_DIR
+else
+  echo "⬅️ Storing runtime cache back into build cache..."
+  cp -R $PUPPETEER_CACHE_DIR /opt/render/project/src/.cache/puppeteer/chrome/
+fi
 
-echo "✅ Chrome installed at: $CHROME_PATH"
-
-# Save it into .env so your Node app can use it
-echo "PUPPETEER_EXECUTABLE_PATH=$CHROME_PATH" > .env
-
-echo "🎉 Render build script completed" 
+echo "✅ Render build script completed successfully!"

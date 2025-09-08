@@ -9,12 +9,12 @@ async function createSkySlopeAgent(firstName,lastName,email,streetNo,streetName,
   const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms + Math.random() * 50));
   const USERNAME = process.env.SKY_USERNAME || "";
   const PASSWORD = process.env.SKY_PASSWORD || "";
-  console.log("Using Chrome at:", process.env.PUPPETEER_EXECUTABLE_PATH);
+  // console.log("Using Chrome at:", process.env.PUPPETEER_EXECUTABLE_PATH);
 
    const browser = await puppeteer.launch({ 
     headless: "new", // Use the new headless mode
     defaultViewport: null,
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || executablePath(), // Specify executable path for Render
+    // executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || executablePath(), // Specify executable path for Render
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
