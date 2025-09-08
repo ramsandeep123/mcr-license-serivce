@@ -12,8 +12,12 @@ mkdir -p /opt/render/.cache/puppeteer
 echo "🌐 Installing Chrome for Puppeteer..."
 npx puppeteer browsers install chrome --cache-dir=/opt/render/.cache/puppeteer
 
-# Export path so server can use it
-export PUPPETEER_EXECUTABLE_PATH="/opt/render/.cache/puppeteer/chrome/linux-140.0.7339.80/chrome-linux64/chrome"
+# Dynamically fetch executable path
+CHROME_PATH=$(npx puppeteer browsers executable-path chrome --cache-dir=/opt/render/.cache/puppeteer)
 
-echo "✅ Chrome installed at: $PUPPETEER_EXECUTABLE_PATH"
+echo "✅ Chrome installed at: $CHROME_PATH"
+
+# Save it into .env so your Node app can use it
+echo "PUPPETEER_EXECUTABLE_PATH=$CHROME_PATH" > .env
+
 echo "🎉 Render build script completed!"
