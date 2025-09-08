@@ -14,13 +14,17 @@ async function createSkySlopeAgent(firstName,lastName,email,streetNo,streetName,
    const browser = await puppeteer.launch({ 
     headless: "new", // Use the new headless mode
     defaultViewport: null,
-    // executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || executablePath(), // Specify executable path for Render
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || executablePath(), // Specify executable path for Render
     args: [
       "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-blink-features=AutomationControlled",
-      "--disable-infobars",
-      "--window-size=1920,1080"
+    "--disable-setuid-sandbox",
+    "--disable-blink-features=AutomationControlled",
+    "--disable-infobars",
+    "--disable-dev-shm-usage",  // important for Render
+    "--disable-gpu",
+    "--no-zygote",
+    "--single-process",
+    "--window-size=1920,1080",
     ]
   });
 
@@ -64,7 +68,7 @@ async function createSkySlopeAgent(firstName,lastName,email,streetNo,streetName,
       return { success: false, error: "Missing required agent fields" };
     }
 
-    await page.goto("https://app.skyslope.com/LoginIntegrated.aspx", { waitUntil: "networkidle2" });
+    await page.goto("https://app.skyslope.com/LoginIntegrated.aspx", { waitUntil: "networkidle2" ,timeout:60000});
     await delay(2000);
 
     await page.type("#idp-discovery-username", USERNAME, { delay: 100 });
@@ -85,7 +89,7 @@ async function createSkySlopeAgent(firstName,lastName,email,streetNo,streetName,
     await delay(2000);
 
     // Navigate to Add Agent page
-    await page.goto("https://app.skyslope.com/ManageBrokerAgents.aspx", { waitUntil: "networkidle2" });
+    await page.goto("https://app.skyslope.com/ManageBrokerAgents.aspx", { waitUntil: "networkidle2",timeout: 60000 });
     await delay(2000);
 
     await page.click("#ContentPlaceHolder1_ibtnAddAgents");
