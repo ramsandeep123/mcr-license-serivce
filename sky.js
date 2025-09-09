@@ -105,13 +105,14 @@ await page.waitForSelector("#ContentPlaceHolder1_ibtnAddAgents", { visible: true
 console.log("✅ Manage Broker Agents page loaded");
 
     await page.click("#ContentPlaceHolder1_ibtnAddAgents");
-   await delay(2000);
+   await delay(5000);
     // Fill Agent Form
 
-    await page.waitForSelector("#ContentPlaceHolder1_txtfname", { visible: true });
-    await delay(2000);
+    await page.waitForSelector("#ContentPlaceHolder1_txtfname", { visible: true ,timeout: 60000});
+    await delay(3000);
 
     await page.type("#ContentPlaceHolder1_txtfname", firstName, { delay: 100 });
+    await delay(3000);
 
 
     await page.type("#ContentPlaceHolder1_txtlname", lastName, { delay: 100 });
@@ -136,8 +137,9 @@ console.log("✅ Manage Broker Agents page loaded");
     await page.click("#ContentPlaceHolder1_MultiCheckOfficeCombo1_txtCombo");
     await delay(1000);
 
-    await page.waitForSelector("#ContentPlaceHolder1_MultiCheckOfficeCombo1_Panel111", { visible: true });
-    await delay(1500);
+    await delay(3000);
+    await page.waitForSelector("#ContentPlaceHolder1_MultiCheckOfficeCombo1_Panel111", { visible: true,timeout: 60000 });
+    await delay(2000);
 
     await page.evaluate((selected_stateCode) => {
       const labels = Array.from(document.querySelectorAll("#ContentPlaceHolder1_MultiCheckOfficeCombo1_chkList label"));
@@ -157,7 +159,7 @@ console.log("✅ Manage Broker Agents page loaded");
   } finally {
     setTimeout(()=>{
         browser.close();
-    },14000)
+    },15000)
     
     console.log("🔒 Browser closed")
   } 
