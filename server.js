@@ -251,14 +251,14 @@ app.post("/forward-sso", async (req, res) => {
 });
 
 app.post("/create-skyslope-agent", async (req, res) => {
-  const { firstName,lastName,email,streetNo,streetName,zip,phone,stateCode } = req.body;
+  const { firstName,lastName,email,phone,stateCode } = req.body;
 
   if (!firstName || !lastName || !email || !stateCode) {
     return res.status(400).json({ error: "firstName, lastName, email and stateCode are required" });
   }
 
   try {
-    const result = await createSkySlopeAgent(firstName,lastName,email,streetNo,streetName,zip,phone,stateCode);
+    const result = await createSkySlopeAgent(firstName,lastName,email,phone,stateCode);
     res.status(result.success ? 200 : 500).json({message: result.success ? "Agent created successfully" : "Failed to create agent" });
   } catch (err) {
     res.status(500).json({ error: "Failed to create agent", details: err.message });

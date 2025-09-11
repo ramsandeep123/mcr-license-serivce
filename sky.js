@@ -4,7 +4,7 @@ const puppeteer = require("puppeteer-extra"); // Use puppeteer-extra
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 puppeteer.use(StealthPlugin());
 const { executablePath } = require('puppeteer');
-async function createSkySlopeAgent(firstName,lastName,email,streetNo,streetName,zip,phone,stateCode) {
+async function createSkySlopeAgent(firstName,lastName,email,phone,stateCode) {
   // SkySlope login credentials (store securely in env vars in production!)
   const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms + Math.random() * 50));
   const USERNAME = process.env.SKY_USERNAME || "";
@@ -68,7 +68,7 @@ async function createSkySlopeAgent(firstName,lastName,email,streetNo,streetName,
       return { success: false, error: "Missing required agent fields" };
     }
 
-    await page.goto("https://app.skyslope.com/LoginIntegrated.aspx", { waitUntil: "networkidle2" ,timeout:60000});
+    await page.goto("https://app.skyslope.com/LoginIntegrated.aspx", { waitUntil: "networkidle2" ,timeout:50000});
     await delay(2000);
 
     await page.type("#idp-discovery-username", USERNAME, { delay: 100 });
@@ -86,18 +86,18 @@ async function createSkySlopeAgent(firstName,lastName,email,streetNo,streetName,
 
     // await page.waitForNavigation({ waitUntil: "networkidle2" });
     await Promise.all([
-    page.waitForNavigation({ waitUntil: "networkidle2", timeout: 60000 }), // Increased timeout and added Promise.all
+    page.waitForNavigation({ waitUntil: "networkidle2", timeout: 40000 }), // Increased timeout and added Promise.all
     page.click(".o-form-button-bar"),
   ]);
     console.log("✅ Logged into SkySlope!");
-    await delay(2000);
+    // await delay(2000);
 
     // Navigate to Add Agent page
     // await page.goto("https://app.skyslope.com/ManageBrokerAgents.aspx", { waitUntil: "networkidle2",timeout: 60000 });
     // await delay(2000);
     await page.goto("https://app.skyslope.com/ManageBrokerAgents.aspx", { 
   waitUntil: "domcontentloaded",
-  timeout: 60000
+  timeout: 40000
 });
 
 // Wait for the Add Agent button to exist instead of waiting for network idle
@@ -108,11 +108,11 @@ console.log("✅ Manage Broker Agents page loaded");
    await delay(3000);
     // Fill Agent Form
 
-    await page.waitForSelector("#ContentPlaceHolder1_txtfname", { visible: true ,timeout: 60000});
-    await delay(3000);
+    await page.waitForSelector("#ContentPlaceHolder1_txtfname", { visible: true ,timeout: 40000});
+    await delay(1000);
 
     await page.type("#ContentPlaceHolder1_txtfname", firstName, { delay: 100 });
-    await delay(3000);
+    await delay(1000);
 
 
     await page.type("#ContentPlaceHolder1_txtlname", lastName, { delay: 100 });
@@ -123,21 +123,21 @@ console.log("✅ Manage Broker Agents page loaded");
 
     await page.type("#ContentPlaceHolder1_txtemail", email, { delay: 100 });
 
-    streetNo && await page.type("#ContentPlaceHolder1_txtStreetNo", streetNo, { delay: 100 });
 
 
-    streetName && await page.type("#ContentPlaceHolder1_txtStreetName", streetName, { delay: 100 });
- 
+    // phone && await page.type("#ContentPlaceHolder1_txtphone",phone, { delay: 100 });
+    if (phone) {
+  await page.evaluate((phone) => {
+    const input = document.querySelector("#ContentPlaceHolder1_txtphone");
+    input.value = phone;
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+  }, phone);
+}
 
-    zip && await page.type("#ContentPlaceHolder1_txtzip", zip, { delay: 100 });
-
-
-    phone && await page.type("#ContentPlaceHolder1_txtphone",phone, { delay: 100 });
 
     await page.click("#ContentPlaceHolder1_MultiCheckOfficeCombo1_txtCombo");
     await delay(1000);
-
-    await delay(2000);
     await page.waitForSelector("#ContentPlaceHolder1_MultiCheckOfficeCombo1_Panel111", { visible: true,timeout: 20000 });
     await delay(2000);
 
