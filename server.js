@@ -9,6 +9,8 @@ const { createSkySlopeAgent } = require('./sky');
 const app = express();
 const jwt = require('jsonwebtoken');
 const port = 3000;
+const {getCoordinates} = require("./services/geocodeService")
+const { supabase } = require("./lib/supabase")
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -264,6 +266,49 @@ app.post("/create-skyslope-agent", async (req, res) => {
     res.status(500).json({ error: "Failed to create agent", details: err.message });
   }
 });
+
+app.post('/add-agent-on-map', async (req, res) => {
+  try {
+    const { office_code, empl_name, address, mobile, email } = req.body;
+
+    if (!office_code || !empl_name || !address || !mobile || !email) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    const coordinates = await getCoordinates(address);
+
+    if (!coordinates) {
+      return res.status(400).json({ error: 'Could not geocode address' });
+    }
+
+    const { data, error } = await supabase
+      .from('agents')
+      .insert([
+        {
+          office_code,
+          empl_name,
+          address,
+          mobile,
+          email,
+          latitude: coordinates.latitude,
+          longitude: coordinates.longitude,
+        },
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: 'Failed to save agent data' });
+    }
+
+    return res.status(201).json({ data });
+  } catch (error) {
+    console.error('Error in POST /api/agents:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`License Checker API running at http://localhost:${port}`);
