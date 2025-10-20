@@ -8,7 +8,7 @@ const cors = require('cors');
 const { createSkySlopeAgent } = require('./sky');
 const app = express();
 const jwt = require('jsonwebtoken');
-const port = 3000;
+const port = 8080;
 const {getCoordinates} = require("./services/geocodeService")
 const { supabase } = require("./lib/supabase")
 app.use(cors());
@@ -267,9 +267,9 @@ app.post("/create-skyslope-agent", async (req, res) => {
   }
 });
 
-app.post('/add-agent-on-map', async (req, res) => {
+app.post('/add-agent-and-office-on-map', async (req, res) => {
   try {
-    const { office_code, empl_name, address, mobile, email } = req.body;
+    const { office_code, empl_name, address, mobile, email,is_agent,is_office,city,state,postal} = req.body;
 
     if (!office_code || !empl_name || !address || !mobile || !email) {
       return res.status(400).json({ error: 'All fields are required' });
@@ -290,8 +290,13 @@ app.post('/add-agent-on-map', async (req, res) => {
           address,
           mobile,
           email,
+          city: city||"",
+          state: state||"",
+          postal: postal || "",
           latitude: coordinates.latitude,
           longitude: coordinates.longitude,
+          is_agent:is_agent||false,
+          is_office:is_office||false
         },
       ])
       .select()
