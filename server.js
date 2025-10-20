@@ -271,11 +271,11 @@ app.post('/add-agent-and-office-on-map', async (req, res) => {
   try {
     const { office_code, empl_name, address, mobile, email,is_agent,is_office,city,state,postal} = req.body;
 
-    if (!office_code || !empl_name || !address || !mobile || !email) {
+    if (!address) {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
-    const coordinates = await getCoordinates(address);
+    const coordinates = await getCoordinates(address,city);
 
     if (!coordinates) {
       return res.status(400).json({ error: 'Could not geocode address' });
