@@ -1,8 +1,9 @@
 import fetch from 'node-fetch';
 
-export async function getCoordinates(address) {
+export async function getCoordinates(address,city) {
   try {
-    const query = encodeURIComponent(`${address},USA`);
+    const cityPart = city ? city : '';
+    const query = encodeURIComponent(`${address},${cityPart},USA`);
     const response = await fetch(
       `https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`,
       {
