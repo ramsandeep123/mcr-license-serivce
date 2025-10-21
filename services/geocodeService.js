@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-
+import axios from 'axios';
 export async function getCoordinates(address,city) {
   try {
     const cityPart = city ? city : '';
@@ -54,6 +54,10 @@ export async function getCoordinatesFromRapidAPI(address, city = '') {
       throw new Error(`RapidAPI request failed: ${response.statusText}`);
     }
 
+    if (data?.Results?.length === 0) {
+      throw new Error(`RapidAPI request failed: ${response.statusText}`);
+    }
+
     const data = await response.json();
 
     if (data?.Results?.length > 0) {
@@ -67,6 +71,43 @@ export async function getCoordinatesFromRapidAPI(address, city = '') {
     return null;
   } catch (error) {
     console.error('Error fetching coordinates from RapidAPI:', error);
+    return null;
+  }
+}
+
+export async function getCoordinatesFromMapsCo(address, city = '') {
+  try {
+    // Combine address and city into one query string
+    const query = encodeURIComponent(`${address},${city},USA`);
+
+    // Your geocode.maps.co API endpoint with key
+    const url = `https://geocode.maps.co/search?q=${query}&api_key=68f76eca3c05c793452222zioaf6ae2`;
+
+    // Request
+    const response = await axios.get(url, {
+      maxBodyLength: Infinity,
+      headers: {
+        'User-Agent': 'AllisonJamesEstatesApp/1.0',
+      },
+    });
+
+    const data = response.data;
+    if (data.length === 0) {
+      throw new Error(`Error from GeoCode: No results found`);
+    }
+    // Validate response
+    if (Array.isArray(data) && data.length > 0) {
+      const bestMatch = data[0]; // Take the first (most relevant) result
+
+      return {
+        latitude: parseFloat(bestMatch.lat),
+        longitude: parseFloat(bestMatch.lon),
+      };
+    }
+
+    return null; // No results found
+  } catch (error) {
+    console.error('Error fetching coordinates from Maps.co:', error.message);
     return null;
   }
 }

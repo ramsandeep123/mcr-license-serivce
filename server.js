@@ -11,6 +11,8 @@ const jwt = require('jsonwebtoken');
 const port = 8080;
 const {getCoordinates} = require("./services/geocodeService")
 const {getCoordinatesFromRapidAPI} = require("./services/geocodeService")
+const {getCoordinatesFromMapsCo} = require("./services/geocodeService")
+
 const { supabase } = require("./lib/supabase")
 app.use(cors());
 app.use(bodyParser.json());
@@ -275,7 +277,6 @@ app.post('/add-agent-and-office-on-map', async (req, res) => {
     if (!address) {
       return res.status(400).json({ error: 'All fields are required' });
     }
-
     const coordinates = await getCoordinates(address,city);
 
     if(coordinates){
@@ -284,13 +285,20 @@ app.post('/add-agent-and-office-on-map', async (req, res) => {
     }
 
     if (!coordinates) {
-      const rapidApiCoordinates = await getCoordinatesFromRapidAPI(address,city);
-      if(rapidApiCoordinates){
+      const geocode = await getCoordinatesFromMapsCo(address,city);
+      if(geocode){
+        latitude = geocode?.latitude;
+        longitude = geocode?.longitude;
+      }
+      if(!geocode){
+        const rapidApiCoordinates = await getCoordinatesFromRapidAPI(address,city);
+        if(rapidApiCoordinates){
         latitude = rapidApiCoordinates?.latitude;
         longitude = rapidApiCoordinates?.longitude;
-      }
-      if(!rapidApiCoordinates){
-        return res.status(400).json({ error: 'Could not geocode address' });
+       }
+        if(!rapidApiCoordinates){
+          return res.status(400).json({ error: 'Could not geocode address from all endpoint' });
+        }
       }
     }
 
