@@ -32,3 +32,41 @@ export async function getCoordinates(address,city) {
     return null;
   }
 }
+
+export async function getCoordinatesFromRapidAPI(address, city = '') {
+  try {
+    // Combine address and city
+    const fullAddress = `${address},${city}`.trim();
+    const query = encodeURIComponent(fullAddress);
+
+    const url = `https://address-from-to-latitude-longitude.p.rapidapi.com/geolocationapi?address=${query}`;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'x-rapidapi-key': '3974e618cdmsh9a6629205b46b55p184684jsn990795080200',
+        'x-rapidapi-host': 'address-from-to-latitude-longitude.p.rapidapi.com',
+        'User-Agent': 'AllisonJamesEstatesApp/1.0'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`RapidAPI request failed: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    if (data?.Results?.length > 0) {
+      const result = data.Results[0];
+      return {
+        latitude: result.latitude,
+        longitude: result.longitude,
+      };
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Error fetching coordinates from RapidAPI:', error);
+    return null;
+  }
+}

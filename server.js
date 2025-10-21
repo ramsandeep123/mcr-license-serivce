@@ -10,6 +10,7 @@ const app = express();
 const jwt = require('jsonwebtoken');
 const port = 8080;
 const {getCoordinates} = require("./services/geocodeService")
+const {getCoordinatesFromRapidAPI} = require("./services/geocodeService")
 const { supabase } = require("./lib/supabase")
 app.use(cors());
 app.use(bodyParser.json());
@@ -270,15 +271,27 @@ app.post("/create-skyslope-agent", async (req, res) => {
 app.post('/add-agent-and-office-on-map', async (req, res) => {
   try {
     const { office_code, empl_name, address, mobile, email,is_agent,is_office,city,state,postal} = req.body;
-
+    let latitude, longitude;
     if (!address) {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
     const coordinates = await getCoordinates(address,city);
 
+    if(coordinates){
+      latitude = coordinates?.latitude;
+      longitude = coordinates?.longitude;
+    }
+
     if (!coordinates) {
-      return res.status(400).json({ error: 'Could not geocode address' });
+      const rapidApiCoordinates = await getCoordinatesFromRapidAPI(address,city);
+      if(rapidApiCoordinates){
+        latitude = rapidApiCoordinates?.latitude;
+        longitude = rapidApiCoordinates?.longitude;
+      }
+      if(!rapidApiCoordinates){
+        return res.status(400).json({ error: 'Could not geocode address' });
+      }
     }
 
     const { data, error } = await supabase
@@ -293,8 +306,8 @@ app.post('/add-agent-and-office-on-map', async (req, res) => {
           city: city||"",
           state: state||"",
           postal: postal || "",
-          latitude: coordinates.latitude,
-          longitude: coordinates.longitude,
+          latitude:latitude,
+          longitude:longitude,
           is_agent:is_agent||false,
           is_office:is_office||false
         },
