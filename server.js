@@ -306,11 +306,11 @@ app.post('/add-agent-and-office-on-map', async (req, res) => {
       .from('agents')
       .insert([
         {
-          office_code,
-          empl_name,
-          address,
-          mobile,
-          email,
+          office_code:office_code||"",
+          empl_name:empl_name||"",
+          address:address||"",
+          mobile:mobile||"",
+          email:email||"",
           city: city||"",
           state: state||"",
           postal: postal || "",
