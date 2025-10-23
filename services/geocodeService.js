@@ -1,5 +1,7 @@
 import fetch from 'node-fetch';
 import axios from 'axios';
+
+const mapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
 export async function getCoordinates(address,city) {
   try {
     const cityPart = city ? city : '';
@@ -108,6 +110,29 @@ export async function getCoordinatesFromMapsCo(address, city = '') {
     return null; // No results found
   } catch (error) {
     console.error('Error fetching coordinates from Maps.co:', error.message);
+    return null;
+  }
+}
+
+export async function getGeocodeDatabyGoogle(address,city='') {
+  const finalAddress = city ? `${address}, ${city},USA` : address;
+  try {
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(finalAddress)}&key=${mapsApiKey}`;
+    const response = await axios.get(url);
+
+    if (response.data.status !== "OK" || !response.data.results.length) {
+      throw new Error("No results found or invalid address.");
+    }
+
+    const result = response.data.results[0];
+    const { lat, lng } = result.geometry.location;
+
+    return {
+      latitude: lat,
+      longitude: lng
+    };
+  } catch (error) {
+    console.error("Error fetching geocode data:", error.message);
     return null;
   }
 }
